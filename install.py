@@ -9,6 +9,9 @@ import platform
 forgeLinkLinuxInstall='http://files.minecraftforge.net/maven/net/minecraftforge/forge/1.7.10-10.13.2.1230/forge-1.7.10-10.13.2.1230-installer.jar'
 forgeLinkWinInstall='http://files.minecraftforge.net/maven/net/minecraftforge/forge/1.7.10-10.13.2.1230/forge-1.7.10-10.13.2.1230-installer-win.exe'
 
+modLinks = 'http://www.mod-buildcraft.com/releases/BuildCraft/6.3.1/buildcraft-6.3.1.jar'
+
+# read character from command line on any system
 try:
     from msvcrt import kbhit
 except ImportError:
@@ -86,8 +89,24 @@ def installForge():
 
     os.remove(filename)
 
+def installMods():
+    'Download and install mods to minecraft mod folder.'
 
+    currentOS = getCurrentOS()
+    mcDir = ''
+
+    if currentOS == 'Linux':
+        mcDir = '~/.minecraft/mods/'
+    elif currentOS == 'Windows':
+        mcDir = '%appdata%/.minecraft/mods/'
+    else:
+        print(currentOS + ' system is not supported')
+        exit(1)
+
+    for x in modLinks:
+        print(x)
 
 if __name__ == "__main__":
     installForge()
 
+    installMods()
