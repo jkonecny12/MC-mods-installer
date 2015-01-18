@@ -45,3 +45,13 @@ class Downloader:
         (filename, headers) = urllib.request.urlretrieve(link, reporthook=self._reportDownload)
         return filename
 
+    def getFileSize(self, link):
+        'Get size of the file on given link'
+
+        site = urllib.request.urlopen(link)
+        meta = site.info()
+
+        #print(int(meta.get('Content-Length')))
+
+        return meta.get('Content-Length')
+
