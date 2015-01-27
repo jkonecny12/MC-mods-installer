@@ -15,8 +15,8 @@ modServer = 'http://www.mod-buildcraft.com/releases/BuildCraft/6.3.1/buildcraft-
 PACKET_SEEKERS = 'http://packetseekers.dvratil.cz/MC-files/'
 MOD_FILE = 'mods.csv'
 
-WIN_FOLDER = '%appdata%/.minecraft/mods/'
-LINUX_FOLDER = '~/.minecraft/mods/'
+WIN_FOLDER = os.path.expanduser('%appdata%/.minecraft/mods/')
+LINUX_FOLDER = os.path.expanduser('~/.minecraft/mods/')
 
 # read character from command line on any system
 try:
