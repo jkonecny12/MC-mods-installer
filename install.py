@@ -118,7 +118,8 @@ def installMods():
 
     updater = updateLib.Updater()
     updater.setPaths(PACKET_SEEKERS + MOD_FILE, mcDir)
-    updater.resolveFiles()
+    if not updater.resolveFiles():
+        return
 
 if __name__ == "__main__":
     installForge()

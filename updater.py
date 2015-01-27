@@ -2,6 +2,8 @@
 
 import downloader as downloadLib
 import csv
+import os
+import sys
 
 class Updater:
     "Download csv file with Excel format with pattern:"
@@ -30,6 +32,14 @@ class Updater:
         downloader = downloadLib.Downloader()
 
         filename = downloader.downloadFile(self.serverCSVPath, silent=True)
+
+        try:
+            fileList = os.listdir(self.localFolderPath)
+        except FileNotFoundError:
+            print('Local folder "' + self.localFolderPath + '" cannot be found!', file=sys.stderr)
+            return False
+
+        print(fileList)
 
         with open(filename, newline='') as csvfile:
             reader = csv.reader(csvfile, delimiter=';')
