@@ -35,14 +35,21 @@ class Downloader:
         if not sizeDownloaded < totalSize:
             print('')
 
-    def downloadFile(self, link, name=""):
+    def downloadFile(self, link, name="", silent=False):
         'Download file and register for creating graphical progress'
-        if not name:
-            self.fileName = link.split('/')[-1]
-        else:
-            self.fileName = name
 
-        (filename, headers) = urllib.request.urlretrieve(link, reporthook=self._reportDownload)
+        if not silent:
+
+            if not name:
+                self.fileName = link.split('/')[-1]
+            else:
+                self.fileName = name
+
+            (filename, headers) = urllib.request.urlretrieve(link, reporthook=self._reportDownload)
+
+        else:
+            (filename, headers) = urllib.request.urlretrieve(link)
+
         return filename
 
     def getFileSize(self, link):

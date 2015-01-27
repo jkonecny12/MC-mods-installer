@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import downloader
+import updater as updateLib
 import os
 import subprocess
 import platform
@@ -10,6 +11,12 @@ forgeLinkLinuxInstall='http://files.minecraftforge.net/maven/net/minecraftforge/
 forgeLinkWinInstall='http://files.minecraftforge.net/maven/net/minecraftforge/forge/1.7.10-10.13.2.1230/forge-1.7.10-10.13.2.1230-installer-win.exe'
 
 modServer = 'http://www.mod-buildcraft.com/releases/BuildCraft/6.3.1/buildcraft-6.3.1.jar'
+
+PACKET_SEEKERS = 'http://packetseekers.dvratil.cz/MC-files/'
+MOD_FILE = 'mods.csv'
+
+WIN_FOLDER = '%appdata%/.minecraft/mods/'
+LINUX_FOLDER = '~/.minecraft/mods/'
 
 # read character from command line on any system
 try:
@@ -90,24 +97,28 @@ def installForge():
     os.remove(filename)
 
 def installMods():
-    'Download and install mods to minecraft mod folder.'
+    "Download and install mods to minecraft mod folder."
 
     currentOS = getCurrentOS()
-    downloadObj = downloader.Downloader()
+#    downloadObj = downloader.Downloader()
     mcDir = ''
 
     if currentOS == 'Linux':
-        mcDir = '~/.minecraft/mods/'
+        mcDir = LINUX_FOLDER
     elif currentOS == 'Windows':
-        mcDir = '%appdata%/.minecraft/mods/'
+        mcDir = WIN_FOLDER
     else:
         print(currentOS + ' system is not supported')
         exit(1)
 
-    print(modServer)
-    print('size: ' + downloadObj.getFileSize(modServer))
-    filename = downloadObj.downloadFile(modServer)
-    print('local size: ' + str(os.path.getsize(filename)))
+#    print(modServer)
+#    print('size: ' + downloadObj.getFileSize(modServer))
+#    filename = downloadObj.downloadFile(modServer)
+#    print('local size: ' + str(os.path.getsize(filename)))
+
+    updater = updateLib.Updater()
+    updater.setPaths(PACKET_SEEKERS + MOD_FILE, mcDir)
+    updater.resolveFiles()
 
 if __name__ == "__main__":
     installForge()
