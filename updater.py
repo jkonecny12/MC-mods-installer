@@ -2,6 +2,7 @@
 
 import downloader as downloadLib
 import csv
+import hashlib
 import os
 import sys
 
@@ -17,6 +18,14 @@ class Updater:
         self.updateFiles = []
         self.missingFiles = []
         self.identicalFiles = []
+
+    def _computeMD5(self, filename):
+        with open(filename, mode='r') as hashfile:
+            md5 = hashlib.md5()
+            for buf in hashfile.read(128):
+                md5.update(buf.encode())
+
+        return md5.hexdigest()
 
     def setPaths(self, serverCSVPath, localFolderPath):
         self.serverCSVPath = serverCSVPath
