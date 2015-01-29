@@ -1,5 +1,8 @@
 # Test files
+# testing files to create hash for
 test_files/*
+# created output file from test_files
+mods.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
