@@ -1,6 +1,6 @@
 # Test files
 # testing files to create hash for
-test_files/*
+mods_folder/*
 # created output file from test_files
 mods.csv
 

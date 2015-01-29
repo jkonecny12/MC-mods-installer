@@ -5,7 +5,7 @@ import csv
 import re
 import utils
 
-COMPUTE_FOLDER = './test_files/'
+COMPUTE_FOLDER = './mods_folder/'
 CSV_NAME = 'mods.csv'
 
 def createCSVfile(data):
