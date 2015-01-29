@@ -119,6 +119,7 @@ def installMods():
     updater = updateLib.Updater()
     updater.setPaths(PACKET_SEEKERS + MOD_FILE, mcDir)
     if not updater.resolveFiles():
+        print('Local folder "' + mcDir + '" cannot be found!', file=sys.stderr)
         return
 
 if __name__ == "__main__":
