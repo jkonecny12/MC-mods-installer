@@ -2,7 +2,7 @@
 
 import downloader as downloadLib
 import csv
-import hashlib
+import utils
 import os
 import sys
 import logging
@@ -31,15 +31,6 @@ class Updater:
         self.updateFiles = []
         self.missingFiles = []
         self.identicalFiles = []
-
-    def _computeMD5(self, filename):
-        "Compute MD5 hash from given file"
-        with open(filename, mode='r') as hashfile:
-            md5 = hashlib.md5()
-            for buf in hashfile.read(128):
-                md5.update(buf.encode())
-
-        return md5.hexdigest()
 
     def setPaths(self, serverCSVPath, localFolderPath):
         "Set path to server CSV file and local MC folder"
@@ -75,7 +66,7 @@ class Updater:
 
                 for lFile in fileList:
                     if lFile.startswith(netFileBaseName):
-# Need to add MD5 checksum control to append file to right list
+                        # Need to add MD5 checksum control to append file to right list
                         self.updateFiles.append(netFileBaseName)
                     else:
                         self.missingFiles.append(netFileBaseName)
