@@ -4,56 +4,61 @@ import urllib.request
 import terminalsize
 
 class Downloader:
-    "Download file and show progress in command line"
+    """Download file and show progress in command line
+    """
+
 
     def __init__(self):
         self.fileName = ''
 
 
-    def _reportDownload(self, blocksDownload, blockSize, fileSize):
-        'Print progress of the actual download'
-        sizeDownloaded = int(blockSize * blocksDownload / 1024)
-        totalSize = int(fileSize / 1024)
-        percentDown = 0.0
+    def _report_download(self, blocks_download, block_size, file_size):
+        """Print progress of the actual download
+        """
+        size_downloaded = int(block_size * blocks_download / 1024)
+        total_size = int(file_size / 1024)
+        percent_down = 0.0
 
-        if sizeDownloaded != 0:
-            percentDown = sizeDownloaded / totalSize
+        if size_downloaded != 0:
+            percent_down = size_downloaded / total_size
 
         term_width = terminalsize.get_terminal_size()[0]
 
-        if not sizeDownloaded < totalSize:
-            sizeDownloaded = totalSize
+        if not size_downloaded < total_size:
+            size_downloaded = total_size
 
-        leftMsg = (self.fileName + '  [')
-        rightMsg = '] ' + str(sizeDownloaded) + ' / ' + str(totalSize) + ' KB'
-        leftSize = len(leftMsg)
-        consoleSpace = term_width - (leftSize + 20) # plus 16 to have a reserve from end with right message for showing size
-        showNumSharps = int(consoleSpace * percentDown)
+        leftmsg = (self.fileName + '  [')
+        rightmsg = '] ' + str(size_downloaded) + ' / ' + str(total_size) + ' KB'
+        leftsize = len(leftmsg)
+        console_space = term_width - (leftsize + 20) # plus 16 to have a reserve from end with right message for showing size
+        show_num_sharps = int(console_space * percent_down)
 
-        print(leftMsg.ljust(showNumSharps + leftSize, '#').ljust(consoleSpace + leftSize) + rightMsg, end='\r')
+        print(leftmsg.ljust(show_num_sharps + leftsize, '#').ljust(console_space + leftsize) + rightmsg, end='\r')
 
-        if not sizeDownloaded < totalSize:
+        if not size_downloaded < total_size:
             print('')
 
-    def downloadFile(self, link, name="", silent=False):
-        'Download file and register for creating graphical progress'
 
+    def download_file(self, link, name = "", silent = False):
+        """Download file and register for creating graphical progress
+        """
         if not silent:
             if not name:
                 self.fileName = link.split('/')[-1]
             else:
                 self.fileName = name
 
-            (filename, headers) = urllib.request.urlretrieve(link, reporthook=self._reportDownload)
+            (filename, headers) = urllib.request.urlretrieve(link, reporthook=self._report_download)
 
         else:
             (filename, headers) = urllib.request.urlretrieve(link)
 
         return filename
 
-    def getFileSize(self, link):
-        'Get size of the file on given link'
 
+    def getFileSize(self, link):
+        """Get size of the file on given link
+        """
         site = urllib.request.urlopen(link)
         meta = site.info()
 

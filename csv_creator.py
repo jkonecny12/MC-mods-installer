@@ -8,12 +8,16 @@ import utils
 COMPUTE_FOLDER = './mods_folder/'
 CSV_NAME = 'mods.csv'
 
-def createCSVfile(data):
+
+def create_csv_file(data):
+    """Create an csv file from files in data array
+    """
     with open(CSV_NAME, 'w', newline='') as csvfile:
         writter = csv.writer(csvfile, delimiter=';')
 
         for row in data:
             writter.writerow(row)
+
 
 if __name__ == "__main__":
 
@@ -36,4 +40,4 @@ if __name__ == "__main__":
             fHash = utils.md5sum(COMPUTE_FOLDER + f)
             filesHash.append((result.group(1), f, fHash))
 
-    createCSVfile(filesHash)
+    create_csv_file(filesHash)

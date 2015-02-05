@@ -1,22 +1,23 @@
 #!/usr/bin/env python3
 
 import downloader
-import updater as updateLib
+import updater as updatelib
 import os
 import subprocess
 import platform
 
 # links to files
-forgeLinkLinuxInstall='http://files.minecraftforge.net/maven/net/minecraftforge/forge/1.7.10-10.13.2.1230/forge-1.7.10-10.13.2.1230-installer.jar'
-forgeLinkWinInstall='http://files.minecraftforge.net/maven/net/minecraftforge/forge/1.7.10-10.13.2.1230/forge-1.7.10-10.13.2.1230-installer-win.exe'
+FORGE_LINK_LINUX_INSTALL='http://files.minecraftforge.net/maven/net/minecraftforge/forge/1.7.10-10.13.2.1230/forge-1.7.10-10.13.2.1230-installer.jar'
+FORGE_LINK_WIN_INSTALL='http://files.minecraftforge.net/maven/net/minecraftforge/forge/1.7.10-10.13.2.1230/forge-1.7.10-10.13.2.1230-installer-win.exe'
 
-modServer = 'http://www.mod-buildcraft.com/releases/BuildCraft/6.3.1/buildcraft-6.3.1.jar'
+MOD_SERVER = 'http://www.mod-buildcraft.com/releases/BuildCraft/6.3.1/buildcraft-6.3.1.jar'
 
 PACKET_SEEKERS = 'http://packetseekers.dvratil.cz/MC-files/'
 MOD_FILE = 'mods.csv'
 
 WIN_FOLDER = os.path.expanduser('%appdata%/.minecraft/mods/')
 LINUX_FOLDER = os.path.expanduser('~/.minecraft/mods/')
+
 
 # read character from command line on any system
 try:
@@ -44,21 +45,22 @@ except ImportError:
             fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
 
 
+def get_current_os():
+    """Get current system string and all linux like system set as Linux string.
+    Windows string will be Windows
+    """
+    current_os = platform.system()
 
-def getCurrentOS():
-    'Get current system string and all linux like system set as Linux string.'
-    'Windows string will be Windows'
-    currentOS = platform.system()
-
-    if currentOS in ['Linux', 'Darwin'] or currentOS.startswith('CYGWIN'):
+    if current_os in ['Linux', 'Darwin'] or current_os.startswith('CYGWIN'):
         return 'Linux'
     else:
-        return currentOS
+        return current_os
 
 
-def askAnswer(question):
-    'Print question and ask user to y/n input.'
-    'Return True or False'
+def ask_answer(question):
+    """'Print question and ask user to y/n input.
+    Return True or False
+    """
     print(question + ' [y/n]')
 
     c = kbhit()
@@ -69,61 +71,63 @@ def askAnswer(question):
         return False
 
 
-def installForge():
-    'Download and install forge.'
-    'It will use installer depending on the platform.'
-
-    if not askAnswer('Do you want to download and install Forge?'):
+def install_forge():
+    """Download and install forge.
+    It will use installer depending on the platform.
+    """
+    if not ask_answer('Do you want to download and install Forge?'):
         return
 
-    currentOS = getCurrentOS()
+    current_os = get_current_os()
 
-    if currentOS == 'Linux':
-        downloadForgeLink = forgeLinkLinuxInstall
-    elif currentOS == 'Windows':
-        downloadForgeLink = forgeLinkWinInstall
+    if current_os == 'Linux':
+        download_forge_link = FORGE_LINK_LINUX_INSTALL
+    elif current_os == 'Windows':
+        download_forge_link = FORGE_LINK_WIN_INSTALL
     else:
-        print(currentOS + ' system is not supported')
+        print(current_os + ' system is not supported')
         exit(1)
 
     download = downloader.Downloader()
-    filename = download.downloadFile(downloadForgeLink, 'forge')
+    filename = download.download_file(download_forge_link, 'forge')
 
-    if currentOS == 'Linux':
+    if current_os == 'Linux':
         subprocess.call(['java', '-jar', filename])
-    elif currentOS == 'Windows':
+    elif current_os == 'Windows':
         subprocess.call([filename])
 
     os.remove(filename)
 
-def installMods():
-    "Download and install mods to minecraft mod folder."
 
-    currentOS = getCurrentOS()
+def install_mods():
+    """Download and install mods to minecraft mod folder.
+    """
+    current_os = get_current_os()
 #    downloadObj = downloader.Downloader()
-    mcDir = ''
+    mcdir = ''
 
-    if currentOS == 'Linux':
-        mcDir = LINUX_FOLDER
-    elif currentOS == 'Windows':
-        mcDir = WIN_FOLDER
+    if current_os == 'Linux':
+        mcdir = LINUX_FOLDER
+    elif current_os == 'Windows':
+        mcdir = WIN_FOLDER
     else:
-        print(currentOS + ' system is not supported')
+        print(current_os + ' system is not supported')
         exit(1)
 
-#    print(modServer)
-#    print('size: ' + downloadObj.getFileSize(modServer))
-#    filename = downloadObj.downloadFile(modServer)
+#    print(MOD_SERVER)
+#    print('size: ' + downloadObj.getFileSize(MOD_SERVER))
+#    filename = downloadObj.downloadFile(MOD_SERVER)
 #    print('local size: ' + str(os.path.getsize(filename)))
 
-    updater = updateLib.Updater()
-    updater.setPaths(PACKET_SEEKERS + MOD_FILE, mcDir)
-    if not updater.resolveFiles():
-        print('Local folder "' + mcDir + '" cannot be found!', file=sys.stderr)
+    updater = updatelib.Updater()
+    updater.set_paths(PACKET_SEEKERS + MOD_FILE, mcdir)
+    if not updater.resolve_files():
+        print('Local folder "' + mcdir + '" cannot be found!', file=sys.stderr)
         return
 
-if __name__ == "__main__":
-    installForge()
 
-    installMods()
+if __name__ == "__main__":
+    install_forge()
+
+    install_mods()
 
