@@ -39,7 +39,6 @@ class Downloader:
         'Download file and register for creating graphical progress'
 
         if not silent:
-
             if not name:
                 self.fileName = link.split('/')[-1]
             else:
