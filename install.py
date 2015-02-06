@@ -19,32 +19,6 @@ WIN_FOLDER = os.path.expanduser('%appdata%/.minecraft/mods/')
 LINUX_FOLDER = os.path.expanduser('~/.minecraft/mods/')
 
 
-# read character from command line on any system
-try:
-    from msvcrt import kbhit
-except ImportError:
-    import termios, fcntl, sys, os
-    def kbhit():
-        fd = sys.stdin.fileno()
-        oldterm = termios.tcgetattr(fd)
-        newattr = termios.tcgetattr(fd)
-        newattr[3] = newattr[3] & ~termios.ICANON & ~termios.ECHO
-        termios.tcsetattr(fd, termios.TCSANOW, newattr)
-        oldflags = fcntl.fcntl(fd, fcntl.F_GETFL)
-        fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
-        try:
-            while True:
-                try:
-                    c = sys.stdin.read(1)
-                    if len(c) > 0:
-                        return c
-                except IOError:
-                    return ''
-        finally:
-            termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
-            fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
-
-
 def get_current_os():
     """Get current system string and all linux like system set as Linux string.
     Windows string will be Windows
@@ -61,11 +35,9 @@ def ask_answer(question):
     """'Print question and ask user to y/n input.
     Return True or False
     """
-    print(question + ' [y/n]')
+    c = input(question + ' [y/n]')
 
-    c = kbhit()
-
-    if c == 'y':
+    if c.lower() == 'y':
         return True
     else:
         return False

@@ -54,7 +54,7 @@ class Updater:
 
         downloader = downloadLib.Downloader()
 
-        filename = downloader.download_ile(self.server_csv_path, silent=True)
+        filename = downloader.download_file(self.server_csv_path, silent=True)
 
         try:
             fileList = os.listdir(self.local_folder_path)
@@ -78,9 +78,9 @@ class Updater:
                         self.missing_files.append(net_file_base_name)
 
         logging.debug('Updater: files are resolved')
-        logging.debug('UpdateFiles: ' + self.update_files)
-        logging.debug('MissingFiles: ' + self.missing_files)
-        logging.debug('IdenticalFiles: ' + self.identical_files)
+        logging.debug('UpdateFiles: ' + ','.join(self.update_files))
+        logging.debug('MissingFiles: ' + ','.join(self.missing_files))
+        logging.debug('IdenticalFiles: ' + ','.join(self.identical_files))
 
         return True
 
