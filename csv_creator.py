@@ -8,6 +8,7 @@ import utils
 COMPUTE_FOLDER = './mods_folder/'
 CSV_NAME = 'mods.csv'
 
+DEFAULT_SERVER = 'http://packetseekers.dvratil.cz/MC-files/'
 
 def create_csv_file(data):
     """Create an csv file from files in data array
@@ -38,6 +39,7 @@ if __name__ == "__main__":
 
         if result:
             fHash = utils.md5sum(COMPUTE_FOLDER + f)
-            filesHash.append((result.group(1), f, fHash))
+            filesHash.append((result.group(1), DEFAULT_SERVER + f, fHash))
 
     create_csv_file(filesHash)
+
