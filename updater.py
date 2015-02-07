@@ -69,13 +69,20 @@ class Updater:
                 print(row)
                 net_file_base_name = row[0]
                 self.parsed_csv_file[net_file_base_name] = row
+                foundFile = False
 
                 for lFile in fileList:
                     if lFile.startswith(net_file_base_name):
-                        # Need to add MD5 checksum control to append file to right list
-                        self.update_files.append(net_file_base_name)
-                    else:
-                        self.missing_files.append(net_file_base_name)
+                        foundFile = True
+                        md5 = utils.md5sum(self.local_folder_path + lFile)
+
+                        if md5 == row[2]:
+                            self.identical_files.append(net_file_base_name)
+                        else:
+                            self.update_files.append(net_file_base_name)
+
+                if not foundFile:
+                    self.missing_files.append(net_file_base_name)
 
         logging.debug('Updater: files are resolved')
         logging.debug('UpdateFiles: ' + ','.join(self.update_files))
@@ -84,6 +91,19 @@ class Updater:
 
         return True
 
+    def update_files(self, files_list):
+        """Update files in the list in local folder.
+        Old files will be deleted!!!
+        """
+        try:
+            localFiles = os.listdir(self.local_folder_path)
+        except FileNotFoundError:
+            return 0
+
+        for f in localFiles:
+            for updateF in files_list:
+                if f.startswith(updateF):
+                    pass # remove actual file and download the new one
 
     def get_update_list(self):
         return self.update_files
