@@ -86,16 +86,24 @@ def install_mods():
         print(current_os + ' system is not supported')
         exit(1)
 
-#    print(MOD_SERVER)
-#    print('size: ' + downloadObj.getFileSize(MOD_SERVER))
-#    filename = downloadObj.downloadFile(MOD_SERVER)
-#    print('local size: ' + str(os.path.getsize(filename)))
-
     updater = updatelib.Updater()
     updater.set_paths(PACKET_SEEKERS + MOD_FILE, mcdir)
     if not updater.resolve_files():
         print('Local folder "' + mcdir + '" cannot be found!', file=sys.stderr)
         return
+
+    updatelist = updater.get_update_list()
+
+    if not updatelist:
+        print('Nothing to be updated')
+        return
+
+    print('Update files:\n', '\n'.join(updatelist))
+    ask_answer('Do you want to update these files?')
+
+    files_updated = updater.update_files(updatelist)
+
+    print('files updated:', files_updated)
 
 
 if __name__ == "__main__":

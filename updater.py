@@ -19,28 +19,28 @@ class Updater:
 
 
     def __init__(self):
-        self.server_csv_path = ""
-        self.local_folder_path = ""
-        self.parsed_csv_file = {}
-        self.update_files = []
-        self.missing_files = []
-        self.identical_files = []
+        self._server_csv_path = ""
+        self._local_folder_path = ""
+        self._parsed_csv_file = {}
+        self._update_files = []
+        self._missing_files = []
+        self._identical_files = []
 
         logging.basicConfig(stream=sys.stderr, level=LOG_LEVEL)
 
 
     def _clear_lists(self):
-        self.parsed_csv_file = {}
-        self.update_files = []
-        self.missing_files = []
-        self.identical_files = []
+        self._parsed_csv_file = {}
+        self._update_files = []
+        self._missing_files = []
+        self._identical_files = []
 
 
-    def set_paths(self, server_csv_path, local_folder_path):
+    def set_paths(self, _server_csv_path, _local_folder_path):
         """Set path to server CSV file and local MC folder
         """
-        self.server_csv_path = server_csv_path
-        self.local_folder_path = local_folder_path
+        self._server_csv_path = _server_csv_path
+        self._local_folder_path = _local_folder_path
 
 
     def resolve_files(self):
@@ -49,15 +49,15 @@ class Updater:
         """
         self._clear_lists()
 
-        if self.server_csv_path == "":
+        if self._server_csv_path == "":
             return False
 
         downloader = downloadLib.Downloader()
 
-        filename = downloader.download_file(self.server_csv_path, silent=True)
+        filename = downloader.download_file(self._server_csv_path, silent=True)
 
         try:
-            fileList = os.listdir(self.local_folder_path)
+            fileList = os.listdir(self._local_folder_path)
         except FileNotFoundError:
             return False
 
@@ -68,52 +68,64 @@ class Updater:
             for row in reader:
                 print(row)
                 net_file_base_name = row[0]
-                self.parsed_csv_file[net_file_base_name] = row
+                self._parsed_csv_file[net_file_base_name] = row
                 foundFile = False
 
                 for lFile in fileList:
                     if lFile.startswith(net_file_base_name):
                         foundFile = True
-                        md5 = utils.md5sum(self.local_folder_path + lFile)
+                        md5 = utils.md5sum(self._local_folder_path + lFile)
 
                         if md5 == row[2]:
-                            self.identical_files.append(net_file_base_name)
+                            self._identical_files.append(net_file_base_name)
                         else:
-                            self.update_files.append(net_file_base_name)
+                            self._update_files.append(net_file_base_name)
 
                 if not foundFile:
-                    self.missing_files.append(net_file_base_name)
+                    self._missing_files.append(net_file_base_name)
 
         logging.debug('Updater: files are resolved')
-        logging.debug('UpdateFiles: ' + ','.join(self.update_files))
-        logging.debug('MissingFiles: ' + ','.join(self.missing_files))
-        logging.debug('IdenticalFiles: ' + ','.join(self.identical_files))
+        logging.debug('UpdateFiles: ' + ','.join(self._update_files))
+        logging.debug('MissingFiles: ' + ','.join(self._missing_files))
+        logging.debug('IdenticalFiles: ' + ','.join(self._identical_files))
 
         return True
+
 
     def update_files(self, files_list):
         """Update files in the list in local folder.
         Old files will be deleted!!!
         """
         try:
-            localFiles = os.listdir(self.local_folder_path)
+            localFiles = os.listdir(self._local_folder_path)
         except FileNotFoundError:
             return 0
+
+        counter = 0
+
+        downloader = downloadLib.Downloader()
 
         for f in localFiles:
             for updateF in files_list:
                 if f.startswith(updateF):
-                    pass # remove actual file and download the new one
+                    print('files found')
+                    tempfile = downloader.download_file(self._parsed_csv_file[updateF][1])
+                    counter += 1
+                    os.remove(self._local_folder_path + f)
+                    os.move(tempfile, self._local_folder_path + f)
+
+        return counter
+
 
     def get_update_list(self):
-        return self.update_files
+        return self._update_files
 
 
     def get_missing_list(self):
-        return self.missing_files
+        return self._missing_files
 
 
-    def get_identical_files(self):
-        return self.identical_files
+    def get__identical_files(self):
+        return self._identical_files
 
 
