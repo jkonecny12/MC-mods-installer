@@ -3,6 +3,7 @@
 import downloader
 import updater as updatelib
 import os
+import sys
 import subprocess
 import platform
 
